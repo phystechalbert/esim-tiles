@@ -34,7 +34,9 @@ final class Esim {
     static final String EXTRA_DEFAULTS = "defaults";
 
     private static final String PREFS = "state";
-    private static final long PENDING_TIMEOUT_MS = 60_000;
+    static final long PENDING_TIMEOUT_MS = 60_000;
+    /** A switch waiting for the user on the system's consent screen. */
+    static final long CONSENT_TIMEOUT_MS = 10 * 60_000;
 
     private Esim() {}
 
@@ -207,7 +209,9 @@ final class Esim {
         int outgoing = plan.outgoing != null ? plan.outgoing.getSubscriptionId() : -1;
         int[] defaults = {state.defaultData, state.defaultVoice, state.defaultSms};
         Object euicc = service("econtroller", "com.android.internal.telephony.euicc.IEuiccController");
-        int op = startOp(context, target.getSubscriptionId());
+        // A consent screen saved for an older switch must not be shown after this one.
+        SwitchResultReceiver.pendingResolution = null;
+        int op = startOp(context, target.getSubscriptionId(), PENDING_TIMEOUT_MS);
         PendingIntent callback = callback(context, op, target.getSubscriptionId(), outgoing, defaults);
         try {
             if (hasMethod(euicc, "switchToSubscriptionWithPort")) {
@@ -223,12 +227,19 @@ final class Esim {
     }
 
     /** Marks a new switch as pending and returns its id. */
-    static int startOp(Context context, int targetSubId) {
+    static int startOp(Context context, int targetSubId, long timeoutMs) {
         // Each switch gets its own id, so a late result can't act on a newer switch.
         int op = (int) (System.currentTimeMillis() & 0x7fffffff);
         if (op == 0) op = 1;
-        setPending(context, op, targetSubId);
+        setPending(context, op, targetSubId, timeoutMs);
         return op;
+    }
+
+    /** Gives the pending switch op a fresh timeout, e.g. once the user has approved it. */
+    static void extendPending(Context context, int op, long timeoutMs) {
+        SharedPreferences prefs = prefs(context);
+        if (prefs.getInt("pending_op", 0) != op) return;
+        prefs.edit().putLong("pending_until", System.currentTimeMillis() + timeoutMs).apply();
     }
 
     /** Callback the eUICC controller sends the result to; carries what the receiver needs. */
@@ -308,7 +319,9 @@ final class Esim {
             if (want == now[i]) continue;
             // -1 for calls and texts is "ask every time", a real choice; for data it means none.
             if (want < 0 ? i == 0 : want == outgoing || !state.isActive(want)) continue;
-            if (onlyFrom >= 0 && now[i] != onlyFrom && now[i] >= 0) continue;
+            // Late pass: undo only what the system did on the new SIM's arrival (moved a default to
+            // it, or dropped data). An "ask every time" picked meanwhile is the user's and stays.
+            if (onlyFrom >= 0 && now[i] != onlyFrom && (now[i] >= 0 || i > 0)) continue;
             call(sub, setters[i], want);
         }
     }
@@ -328,7 +341,7 @@ final class Esim {
     }
 
     /** True while a phone call is ringing or going on; unknown counts as not in a call. */
-    private static boolean inCall() {
+    static boolean inCall() {
         try {
             Object telecom = service("telecom", "com.android.internal.telecom.ITelecomService");
             return (boolean) call(telecom, "isInCall", SHELL, null);
@@ -343,16 +356,15 @@ final class Esim {
 
     static int pendingTarget(Context context) {
         SharedPreferences prefs = prefs(context);
-        long at = prefs.getLong("pending_at", 0);
-        if (System.currentTimeMillis() - at > PENDING_TIMEOUT_MS) return -1;
+        if (System.currentTimeMillis() > prefs.getLong("pending_until", 0)) return -1;
         return prefs.getInt("pending_sub", -1);
     }
 
-    private static void setPending(Context context, int op, int subId) {
+    private static void setPending(Context context, int op, int subId, long timeoutMs) {
         prefs(context).edit()
                 .putInt("pending_op", op)
                 .putInt("pending_sub", subId)
-                .putLong("pending_at", System.currentTimeMillis())
+                .putLong("pending_until", System.currentTimeMillis() + timeoutMs)
                 .apply();
     }
 
@@ -360,7 +372,7 @@ final class Esim {
     static void clearPending(Context context, int op) {
         SharedPreferences prefs = prefs(context);
         if (prefs.getInt("pending_op", 0) != op) return;
-        prefs.edit().remove("pending_op").remove("pending_sub").remove("pending_at").apply();
+        prefs.edit().remove("pending_op").remove("pending_sub").remove("pending_until").apply();
     }
 
     static String describe(Context context, Throwable e) {

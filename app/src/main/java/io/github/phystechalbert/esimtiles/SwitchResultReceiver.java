@@ -12,6 +12,7 @@ import android.widget.Toast;
 /** Receives the eUICC controller's verdict on a switch started by Esim.switchTo. */
 public class SwitchResultReceiver extends BroadcastReceiver {
     private static final String TAG = "EsimTiles";
+    private static final long RESTORE_DELAY_MS = 7000;
 
     /**
      * Result of the last switch that needs the user's consent; MainActivity shows the system's
@@ -48,11 +49,17 @@ public class SwitchResultReceiver extends BroadcastReceiver {
 
         PendingResult async = goAsync();
         Handler handler = new Handler(Looper.getMainLooper());
+        // Hold the switch through the delayed pass below, however late within its timeout this came.
+        Esim.extendPending(context, op, RESTORE_DELAY_MS + 30_000);
         restore(defaults, outgoing, -1);
         // The new SIM finishes loading a few seconds later and the system may move defaults onto it
         // then. Fix only those; anything else changed in between is the user's choice. The switch
         // stays pending until here, so no other switch can interleave.
         handler.postDelayed(() -> {
+            if (!Esim.isPendingOp(context, op)) {
+                async.finish();
+                return;
+            }
             restore(defaults, outgoing, target);
             try {
                 if (!Esim.read().isActive(target)) {
@@ -63,7 +70,7 @@ public class SwitchResultReceiver extends BroadcastReceiver {
             }
             Esim.clearPending(context, op);
             async.finish();
-        }, 7000);
+        }, RESTORE_DELAY_MS);
     }
 
     private static void restore(int[] defaults, int outgoing, int onlyFrom) {

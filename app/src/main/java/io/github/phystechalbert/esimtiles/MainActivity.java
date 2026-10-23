@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.telephony.SubscriptionInfo;
+import android.telephony.TelephonyManager;
 import android.telephony.euicc.EuiccManager;
 import android.view.View;
 import android.widget.Button;
@@ -76,8 +77,12 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Declined or backed out: the controller sends no result, so free the tiles right away.
-        if (requestCode == CONFIRM_REQUEST && resultCode != RESULT_OK && confirmOp != 0) {
+        if (requestCode != CONFIRM_REQUEST || confirmOp == 0) return;
+        if (resultCode == RESULT_OK) {
+            // Approved: the switch runs now, so the usual execution timeout starts here.
+            Esim.extendPending(this, confirmOp, Esim.PENDING_TIMEOUT_MS);
+        } else {
+            // Declined or backed out: the controller sends no result, so free the tiles right away.
             Esim.clearPending(this, confirmOp);
         }
         confirmOp = 0;
@@ -92,10 +97,30 @@ public class MainActivity extends Activity {
         if (result == null) return;
         SwitchResultReceiver.pendingResolution = null;
         int target = result.getIntExtra(Esim.EXTRA_TARGET, -1);
-        int op = Esim.startOp(this, target);
+        int outgoing = result.getIntExtra(Esim.EXTRA_OUTGOING, -1);
+        // The consent belongs to the SIM layout of its time: show it only if nothing has moved since.
+        Esim.State state;
         try {
-            PendingIntent callback = Esim.callback(this, op, target,
-                    result.getIntExtra(Esim.EXTRA_OUTGOING, -1), result.getIntArrayExtra(Esim.EXTRA_DEFAULTS));
+            state = Esim.read();
+        } catch (Exception e) {
+            return;
+        }
+        if (Esim.pendingTarget(this) >= 0 || Esim.inCall()) return;
+        // Same checks as a fresh switch, and it must still replace the same SIM.
+        SubscriptionInfo targetInfo = state.find(target);
+        if (targetInfo == null) return;
+        try {
+            Esim.Plan plan = Esim.plan(state, Config.primary(this), targetInfo,
+                    getSystemService(TelephonyManager.class).getActiveModemCount());
+            int planned = plan.outgoing != null ? plan.outgoing.getSubscriptionId() : -1;
+            if (planned != outgoing) return;
+        } catch (Esim.Refused e) {
+            return;
+        }
+        int op = Esim.startOp(this, target, Esim.CONSENT_TIMEOUT_MS);
+        try {
+            PendingIntent callback = Esim.callback(this, op, target, outgoing,
+                    new int[]{state.defaultData, state.defaultVoice, state.defaultSms});
             getSystemService(EuiccManager.class).startResolutionActivity(this, CONFIRM_REQUEST, result, callback);
             confirmOp = op;
         } catch (Exception e) {
@@ -202,6 +227,7 @@ public class MainActivity extends Activity {
             button.setOnCheckedChangeListener((b, checked) -> {
                 if (!checked) return;
                 Config.setPrimary(this, info.getSubscriptionId());
+                SwitchResultReceiver.pendingResolution = null;
                 List<Integer> tiles = Config.tiles(this);
                 tiles.remove(Integer.valueOf(info.getSubscriptionId()));
                 Config.setTiles(this, tiles);
