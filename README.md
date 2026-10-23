@@ -55,8 +55,8 @@ on by hand in Settings → SIMs before you rely on the tiles while travelling.
 
 Open an [issue](../../issues) with:
 
-- phone model and Android version;
-- main SIM physical or eSIM; how many eSIMs are stored;
+- the text from **Copy report for a bug report** at the bottom of the app (phone model, Android
+  version, SIM slots and ports, last result; no phone numbers or SIM serials);
 - did the switch work, how long it took, any error text.
 
 | Phone | Android | Setup | Result |
