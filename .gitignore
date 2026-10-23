@@ -1,0 +1,11 @@
+# build output
+.gradle/
+build/
+app/build/
+local.properties
+*.iml
+.idea/
+
+# release signing: keystore and passwords never go to git
+.signing/*
+!.signing/make_keystore.py

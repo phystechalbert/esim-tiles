@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">eSIM Tiles</string>
+    <string name="tile_default_label">eSIM %1$d</string>
+    <string name="intro">Switch the second SIM slot between your stored eSIMs with one tap in Quick Settings. Your main SIM (data and calls) stays on.</string>
+
+    <string name="shizuku_header">Shizuku</string>
+    <string name="shizuku_not_installed">This app needs Shizuku, a free app that lends other apps the rights of a USB debugging session without root. Install it, start it (Shizuku → Start via Wireless debugging), then come back.</string>
+    <string name="shizuku_not_running">Shizuku isn\'t running. Open it and start it via Wireless debugging. It stops after every reboot; Shizuku can start itself on a trusted Wi-Fi (see its settings).</string>
+    <string name="shizuku_too_old">Shizuku is too old, please update it.</string>
+    <string name="shizuku_allow">Allow eSIM Tiles to use Shizuku.</string>
+    <string name="install_shizuku">Install Shizuku</string>
+    <string name="open_shizuku">Open Shizuku</string>
+    <string name="check_again">Check again</string>
+    <string name="allow">Allow</string>
+
+    <string name="read_failed">Couldn\'t read the SIMs: %1$s</string>
+    <string name="no_esims">No stored eSIM profiles are visible. On this phone the system doesn\'t give them to Shizuku, so the app can\'t help here.</string>
+
+    <string name="primary_header">Main SIM</string>
+    <string name="primary_hint">The SIM for data and calls. The app never switches it off.</string>
+    <string name="primary_missing">Your main SIM is off or gone. Turn it on in Settings → SIMs, or pick another one here. Until then the tiles won\'t switch.</string>
+    <string name="tiles_header">SIMs for the tiles</string>
+    <string name="tiles_hint">Pick up to %1$d eSIMs. Each gets its own tile; a tap puts it into the second slot instead of the one there now.</string>
+    <string name="too_many">At most %1$d tiles</string>
+    <string name="now_header">Second slot</string>
+    <string name="now_second">Now: %1$s</string>
+    <string name="none">empty</string>
+    <string name="switching">Switching…</string>
+    <string name="switching_to">Turning on %1$s…</string>
+    <string name="shade_header">Tiles</string>
+    <string name="add_tiles">Add tiles to Quick Settings</string>
+    <string name="notes">How it works: the app only enables profiles that are already on the phone; it never deletes or downloads anything. It has no internet access and doesn\'t read your messages. After a switch it puts data, calls and texts back on the SIMs you had them on. Switching takes about 15 seconds; ask for an SMS code only after the SIM shows signal.</string>
+
+    <string name="warning_title">Before the first switch</string>
+    <string name="warning_text">Switching turns off the eSIM that is in the second slot now. Calls and texts to that number won\'t reach you until you switch back. The app uses hidden Android functions: on some phones it may not work or may behave unexpectedly. Make sure you know how to turn a SIM on in Settings → SIMs.</string>
+    <string name="warning_ok">I understand</string>
+
+    <string name="switch_failed">Didn\'t switch: %1$s</string>
+    <string name="result_needs_confirmation">The phone wants you to confirm the switch: open eSIM Tiles.</string>
+    <string name="confirm_failed">Couldn\'t show the confirmation: %1$s. Use Settings → SIMs.</string>
+    <string name="report_header">Testing</string>
+    <string name="copy_report">Copy report for a bug report</string>
+    <string name="report_copied">Report copied. It has no phone numbers or SIM serials.</string>
+    <string name="result_error">Didn\'t switch: the phone returned an error (%1$d/%2$d).</string>
+    <string name="result_not_active">The phone reported success, but the SIM isn\'t on. Check Settings → SIMs.</string>
+
+    <string name="refuse_no_primary">pick the main SIM in the app first</string>
+    <string name="refuse_target_is_primary">this is the main SIM</string>
+    <string name="refuse_not_esim">only eSIMs can be switched</string>
+    <string name="refuse_already_on">this SIM is already on</string>
+    <string name="refuse_ambiguous">more than one other SIM is on; turn one off in Settings</string>
+    <string name="refuse_second_is_physical">the second slot holds a physical SIM</string>
+    <string name="refuse_empty_slot">the second slot is empty; turn this eSIM on once in Settings → SIMs, then the tiles take over</string>
+    <string name="refuse_unknown_port">the phone doesn\'t say where the eSIM sits</string>
+    <string name="refuse_other_chip">this eSIM is on another chip</string>
+    <string name="refuse_would_hit_primary">this would turn off the main SIM</string>
+    <string name="refuse_busy">a switch is already running</string>
+    <string name="refuse_in_call">not during a call</string>
+
+    <string name="tile_needs_shizuku">needs Shizuku</string>
+    <string name="tile_not_set">set up in the app</string>
+    <string name="tile_missing">eSIM not found</string>
+    <string name="tile_switching">turning on…</string>
+    <string name="tile_on">on</string>
+    <string name="tile_off">off</string>
+    <string name="tile_error">error</string>
+</resources>

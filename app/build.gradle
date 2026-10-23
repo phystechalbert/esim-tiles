@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Release signing comes from .signing/keystore.properties, which stays out of git.
+def signingProps = new Properties()
+def signingFile = rootProject.file('.signing/keystore.properties')
+if (signingFile.exists()) signingFile.withInputStream { signingProps.load(it) }
+
+android {
+    namespace 'io.github.phystechalbert.esimtiles'
+    compileSdk 37
+
+    defaultConfig {
+        applicationId 'io.github.phystechalbert.esimtiles'
+        minSdk 34
+        targetSdk 37
+        versionCode 1
+        versionName '0.1.0'
+    }
+
+    signingConfigs {
+        release {
+            if (signingFile.exists()) {
+                storeFile rootProject.file('.signing/' + signingProps['storeFile'])
+                storePassword signingProps['storePassword']
+                keyAlias signingProps['alias']
+                keyPassword signingProps['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingFile.exists() ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'dev.rikka.shizuku:api:13.1.5'
+    implementation 'dev.rikka.shizuku:provider:13.1.5'
+    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'
+}

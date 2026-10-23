@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tile_default_label">eSIM %1$d</string>
+    <string name="intro">Переключает второй слот между сохранёнными eSIM одним тапом в шторке. Основная симка (интернет и звонки) остаётся включённой.</string>
+
+    <string name="shizuku_header">Shizuku</string>
+    <string name="shizuku_not_installed">Нужен Shizuku — бесплатное приложение, которое даёт другим приложениям права USB-отладки без root. Установи его, запусти (Shizuku → «Запуск через беспроводную отладку») и вернись сюда.</string>
+    <string name="shizuku_not_running">Shizuku не запущен. Открой его и запусти через беспроводную отладку. После каждой перезагрузки он останавливается; в его настройках можно включить автозапуск в доверенной Wi-Fi-сети.</string>
+    <string name="shizuku_too_old">Shizuku слишком старый, обнови его.</string>
+    <string name="shizuku_allow">Разреши eSIM Tiles пользоваться Shizuku.</string>
+    <string name="install_shizuku">Установить Shizuku</string>
+    <string name="open_shizuku">Открыть Shizuku</string>
+    <string name="check_again">Проверить снова</string>
+    <string name="allow">Разрешить</string>
+
+    <string name="read_failed">Не смог прочитать симки: %1$s</string>
+    <string name="no_esims">Не видно ни одной сохранённой eSIM. На этом телефоне система не отдаёт их Shizuku, приложение здесь не поможет.</string>
+
+    <string name="primary_header">Основная симка</string>
+    <string name="primary_hint">Симка для интернета и звонков. Приложение никогда её не выключает.</string>
+    <string name="primary_missing">Основная симка выключена или удалена. Включи её в Настройках → SIM-карты или выбери другую здесь. До этого плитки не переключают.</string>
+    <string name="tiles_header">Симки для плиток</string>
+    <string name="tiles_hint">Выбери до %1$d eSIM. У каждой будет своя плитка; тап ставит её во второй слот вместо той, что там сейчас.</string>
+    <string name="too_many">Не больше %1$d плиток</string>
+    <string name="now_header">Второй слот</string>
+    <string name="now_second">Сейчас: %1$s</string>
+    <string name="none">пусто</string>
+    <string name="switching">Переключаю…</string>
+    <string name="switching_to">Включаю %1$s…</string>
+    <string name="shade_header">Плитки</string>
+    <string name="add_tiles">Добавить плитки в шторку</string>
+    <string name="notes">Как это работает: приложение только включает профили, которые уже есть на телефоне, и ничего не удаляет и не скачивает. Доступа в интернет у него нет, SMS оно не читает. После переключения возвращает интернет, звонки и SMS на те симки, где они были. Переключение занимает около 15 секунд; код по SMS запрашивай, когда симка поймала сеть.</string>
+
+    <string name="warning_title">Перед первым переключением</string>
+    <string name="warning_text">Переключение выключает eSIM, которая сейчас во втором слоте. Звонки и SMS на её номер не дойдут, пока не включишь её обратно. Приложение пользуется скрытыми функциями Android: на некоторых телефонах оно может не работать или вести себя неожиданно. Убедись, что знаешь, как включить симку в Настройках → SIM-карты.</string>
+    <string name="warning_ok">Понятно</string>
+
+    <string name="switch_failed">Не переключилось: %1$s</string>
+    <string name="result_needs_confirmation">Телефон просит подтвердить переключение: открой eSIM Tiles.</string>
+    <string name="confirm_failed">Не смог показать подтверждение: %1$s. Переключи в Настройках → SIM-карты.</string>
+    <string name="report_header">Тестирование</string>
+    <string name="copy_report">Скопировать отчёт для тестеров</string>
+    <string name="report_copied">Отчёт скопирован. Номеров и серийных номеров SIM в нём нет.</string>
+    <string name="result_error">Не переключилось: телефон вернул ошибку (%1$d/%2$d).</string>
+    <string name="result_not_active">Телефон ответил «готово», но симка не включилась. Проверь Настройки → SIM-карты.</string>
+
+    <string name="refuse_no_primary">сначала выбери основную симку в приложении</string>
+    <string name="refuse_target_is_primary">это основная симка</string>
+    <string name="refuse_not_esim">переключать можно только eSIM</string>
+    <string name="refuse_already_on">эта симка уже включена</string>
+    <string name="refuse_ambiguous">включено больше одной дополнительной симки, выключи лишнюю в Настройках</string>
+    <string name="refuse_second_is_physical">во втором слоте физическая SIM</string>
+    <string name="refuse_empty_slot">второй слот пуст; включи эту eSIM один раз в Настройках → SIM-карты, дальше переключат плитки</string>
+    <string name="refuse_unknown_port">телефон не сообщает, где стоит eSIM</string>
+    <string name="refuse_other_chip">эта eSIM на другом чипе</string>
+    <string name="refuse_would_hit_primary">так выключилась бы основная симка</string>
+    <string name="refuse_busy">переключение уже идёт</string>
+    <string name="refuse_in_call">не во время звонка</string>
+
+    <string name="tile_needs_shizuku">нужен Shizuku</string>
+    <string name="tile_not_set">настрой в приложении</string>
+    <string name="tile_missing">eSIM не найдена</string>
+    <string name="tile_switching">включаю…</string>
+    <string name="tile_on">включена</string>
+    <string name="tile_off">выключена</string>
+    <string name="tile_error">ошибка</string>
+</resources>
